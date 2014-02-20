@@ -5,6 +5,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -17,57 +20,90 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "usuario")
 public class Usuario implements Serializable {
 
-	private static final long serialVersionUID = 443411242L;
+    private static final long serialVersionUID = 443411242L;
 
-	@Id
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	private String id;
-	@Column
-	private String nombre;
-	@Column
-	private String usuario;
-	@Column
-	private String contrasena;
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String id;
+    @Column
+    private String nombre;
+    @Column
+    private String paterno;
+    @Column
+    private String materno;
+    @Column
+    private String usuario;
+    @Column
+    private String clave;
+    @OneToOne(optional = true)
+    @JoinColumn(name = "id_supervisor")
+    @MapsId
+    private Supervisor supervisor;
 
-	public Usuario() {
-	}
+    public Usuario() {
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public String getUsuario() {
-		return usuario;
-	}
+    public String getUsuario() {
+        return usuario;
+    }
 
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
-	}
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
 
-	public String getContrasena() {
-		return contrasena;
-	}
+    public String getPaterno() {
+        return paterno;
+    }
 
-	public void setContrasena(String contrasena) {
-		this.contrasena = contrasena;
-	}
+    public void setPaterno(String paterno) {
+        this.paterno = paterno;
+    }
 
-	@Override
-	public String toString() {
-		return nombre;
-	}
+    public String getMaterno() {
+        return materno;
+    }
+
+    public void setMaterno(String materno) {
+        this.materno = materno;
+    }
+
+    public String getClave() {
+        return clave;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
+    }
+
+    public Supervisor getSupervisor() {
+        return supervisor;
+    }
+
+    public void setSupervisor(Supervisor supervisor) {
+        this.supervisor = supervisor;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s", nombre, paterno,
+                materno == null ? "" : materno);
+    }
 
 }

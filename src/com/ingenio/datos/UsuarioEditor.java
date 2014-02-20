@@ -52,14 +52,14 @@ public class UsuarioEditor extends Editor<Usuario> {
     public void mostrar() {
         jtfUsuario.setText(usuario.getUsuario());
         jtfNombre.setText(usuario.getNombre());
-        jpfContra.setText(usuario.getContrasena());
+        jpfContra.setText(usuario.getClave());
     }
 
     @Override
     public Usuario getItem() throws AppException {
         usuario.setNombre(jtfNombre.getText());
         usuario.setUsuario(jtfUsuario.getText());
-        usuario.setContrasena(new String(jpfContra.getPassword()));
+        usuario.setClave(new String(jpfContra.getPassword()));
         return usuario;
     }
 
