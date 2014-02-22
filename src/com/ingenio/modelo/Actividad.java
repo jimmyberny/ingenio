@@ -54,4 +54,9 @@ public class Actividad implements Serializable {
         this.descripcion = descripcion;
     }
 
+    @Override
+    public String toString() {
+        return nombre;
+    }
+
 }

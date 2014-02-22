@@ -24,8 +24,6 @@ public class Contrato implements Serializable {
     private String id;
     @Column
     private String nombre;
-    @Column
-    private String descripcion;
 
     public Contrato() {
     }
@@ -46,12 +44,9 @@ public class Contrato implements Serializable {
         this.nombre = nombre;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    @Override
+    public String toString() {
+        return nombre;
     }
 
 }

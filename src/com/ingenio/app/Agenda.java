@@ -60,7 +60,6 @@ public class Agenda extends AplicacionFrame {
 		menu.addItem("title.sectores", AgendaClaves.SECTORES);
 		menu.addItem("title.organizaciones", AgendaClaves.ORGANIZACIONES);
 		menu.addItem("title.contratos", AgendaClaves.CONTRATOS);
-		menu.addItem("title.tiposcontrato", AgendaClaves.CONTRATOS);
 		menu.addItem("title.canas", AgendaClaves.CANAS);
 		menu.addItem("title.zafras", AgendaClaves.ZAFRAS);
 		menu.addItem("title.actividades", AgendaClaves.ACTIVIDADES);
