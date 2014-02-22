@@ -1,9 +1,9 @@
 package com.siem.test;
 
-import com.ingenio.modelo.Usuario;
+import com.ingenio.modelo.Supervisor;
 import java.util.List;
 import junit.framework.Assert;
-import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.classic.Session;
@@ -16,29 +16,25 @@ import org.slf4j.LoggerFactory;
  * @author José Bernardo Gómez-Andrade
  */
 public class BernardoTest {
-	
-	private static final Logger log = LoggerFactory.getLogger(BernardoTest.class);
 
-	/**
-	 * Un test de ejemplo.
-	 * Ejecutan con Run file o Shift + F6
-	 */
-	@Test
-	public void test() {
-		SessionFactory sf = new Configuration().configure().buildSessionFactory(); // Cargar la configuracion de hibernate.cfg.xml
-		Assert.assertNotNull(sf); // El factory de las sesiones si se creo
+    private static final Logger log = LoggerFactory.getLogger(BernardoTest.class);
 
-		Session cs = sf.getCurrentSession();
-		Assert.assertNotNull(cs); // Que la session actual no es null
+    /**
+     * Un test de ejemplo. Ejecutan con Run file o Shift + F6
+     */
+    @Test
+    public void test() {
+        SessionFactory sf = new Configuration().configure().buildSessionFactory(); // Cargar la configuracion de hibernate.cfg.xml
+        Assert.assertNotNull(sf); // El factory de las sesiones si se creo
 
-		cs.beginTransaction(); // Abrir una transaccion
-		Criteria cr = cs.createCriteria(Usuario.class); // Hacer un criteria sobre los objetos de la clase usuario.
-		List<Usuario> usuarios = cr.list(); // Hacer un select * from usuario, si lo quieren ver de ese modo
-		Assert.assertNotNull(usuarios); // Probar si hay resultado, al menos una lista vacía.
+        Session cs = sf.getCurrentSession();
+        Assert.assertNotNull(cs); // Que la session actual no es null
 
-		for (Usuario u : usuarios) { // Iterar sobre los resultados
-			log.info("{} -> {}", u.getId(), u.getNombre());
-		}
-		cs.getTransaction().commit();
-	}
+        cs.beginTransaction(); // Abrir una transaccion
+        List list = cs.createQuery("from Zona as z where z.id not in (select s.zona from Supervisor as s)").list();
+        for (Object obj : list) {
+            log.info("{}", obj);
+        }
+        cs.getTransaction().commit();
+    }
 }

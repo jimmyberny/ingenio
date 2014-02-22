@@ -32,4 +32,14 @@ public class OrigenGeneral implements AplicacionBean {
         }.exec();
     }
     
+    public List<Zona> listarZonasSinSupervisor() throws AppException {
+        return (List<Zona>) new Transaccion(factory) {
+            
+            @Override
+            public Object execInTransaction(Session s, Object... params) throws AppException {
+                return s.createQuery("from Zona as z where z.id not in (select s.zona from Supervisor as s)").list();
+            }
+        }.exec();
+    }
+    
 }

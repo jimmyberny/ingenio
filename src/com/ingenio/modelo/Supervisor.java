@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -26,6 +28,10 @@ public class Supervisor implements Serializable {
     @ManyToOne
     @JoinColumn(name = "id_zona")
     private Zona zona;
+    @OneToOne(optional = true)
+    @JoinColumn(name = "id_usuario")
+    @MapsId
+    private Usuario usuario;
 
     public Supervisor() {
     }

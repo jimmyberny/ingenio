@@ -13,12 +13,10 @@ import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
 public class Agenda extends AplicacionFrame {
 
 	private static final Logger log = LoggerFactory.getLogger(Agenda.class);
+        
 	private SessionFactory factory;
 	private MenuUtil menu;
 	private CardNavigator nav;

@@ -1,6 +1,12 @@
 package com.ingenio.datos;
 
+import com.ingenio.app.AgendaClaves;
 import com.ingenio.modelo.Usuario;
+import com.ingenio.modelo.Zona;
+import com.ingenio.modelo.auxiliar.ListaSimple;
+import com.ingenio.origenes.OrigenGeneral;
+import java.util.logging.Level;
+import javax.swing.DefaultListModel;
 import mx.com.ledi.error.AppException;
 import mx.com.ledi.interfaces.Editor;
 import mx.com.ledi.interfaces.gui.Aplicacion;
@@ -15,14 +21,22 @@ import org.slf4j.LoggerFactory;
 public class UsuarioEditor extends Editor<Usuario> {
 
     private static final Logger log = LoggerFactory.getLogger(UsuarioEditor.class);
-    
+
     private Aplicacion app;
     private Usuario usuario;
+    private OrigenGeneral oGeneral;
+    //
+    private ListaSimple<Zona> lZonas;
 
     public UsuarioEditor(Aplicacion app, MonitorListener monitor) {
         initComponents();
 
         this.app = app;
+        oGeneral = (OrigenGeneral) app.getBean(AgendaClaves.ORI_GENERAL);
+
+        lZonas = new ListaSimple<Zona>();
+        jlZonas.setModel(lZonas);
+
         monitor.listenTo(jtfNombre);
         monitor.listenTo(jtfPaterno);
         monitor.listenTo(jtfMaterno);
@@ -67,23 +81,50 @@ public class UsuarioEditor extends Editor<Usuario> {
         jtfMaterno.setText(usuario.getMaterno());
         jtfUsuario.setText(usuario.getUsuario());
         jpfContra.setText(usuario.getClave());
-       
-        // Stuff about idnk
+        try {
+            // Stuff about idnk
+            // Listar las zonas sin supervisor
+            lZonas.setList(oGeneral.listarZonasSinSupervisor());
+        } catch (AppException ex) {
+            log.error(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public Usuario getItem() throws AppException {
         usuario.setNombre(jtfNombre.getText());
+        usuario.setPaterno(jtfPaterno.getText());
+        usuario.setMaterno(jtfMaterno.getText());
         usuario.setUsuario(jtfUsuario.getText());
-        usuario.setClave(new String(jpfContra.getPassword()));
+        String c1 = new String(jpfContra.getPassword());
+        String c2 = new String(jpfRepetir.getPassword());
+        if (!c1.equals(c2)) {
+            throw new AppException("La nueva contraseña no coincide");
+        }
+        if (usuario.getId() == null) {
+            // nuevo usuario
+            usuario.setClave(c1);
+        } else {
+            String op = new String(jpfAnterior.getPassword());
+            if (op.equals(usuario.getClave())) {
+                usuario.setClave(c1);
+            } else {
+                throw new AppException("Se requiere la contraseña anterior para cambiar la actual");
+            }
+        }
         return usuario;
     }
 
     @Override
     public void setActivo(boolean activo) {
         jtfNombre.setEnabled(activo);
+        jtfPaterno.setEnabled(activo);
+        jtfMaterno.setEnabled(activo);
         jtfUsuario.setEnabled(activo);
+        
         jpfContra.setEnabled(activo);
+        jpfRepetir.setEnabled(activo);
+        jpfAnterior.setEnabled(activo);
     }
 
     @Override
@@ -94,8 +135,13 @@ public class UsuarioEditor extends Editor<Usuario> {
     @Override
     public void limpiar() {
         jtfNombre.setText(null);
+        jtfPaterno.setText(null);
+        jtfMaterno.setText(null);
         jtfUsuario.setText(null);
+        
         jpfContra.setText(null);
+        jpfRepetir.setText(null);
+        jpfAnterior.setText(null);
     }
 
     @SuppressWarnings("unchecked")
@@ -120,7 +166,7 @@ public class UsuarioEditor extends Editor<Usuario> {
         jpfContra = new javax.swing.JPasswordField();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        jlZonas = new javax.swing.JList();
         jLabel8 = new javax.swing.JLabel();
         jtfNombre1 = new javax.swing.JTextField();
         jbDejar = new javax.swing.JButton();
@@ -245,8 +291,8 @@ public class UsuarioEditor extends Editor<Usuario> {
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Zonas sin supervisor"));
 
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(jList1);
+        jlZonas.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(jlZonas);
 
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel8.setText("Zona asignada");
@@ -308,13 +354,13 @@ public class UsuarioEditor extends Editor<Usuario> {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton jbAsignar;
     private javax.swing.JButton jbDejar;
+    private javax.swing.JList jlZonas;
     private javax.swing.JPasswordField jpfAnterior;
     private javax.swing.JPasswordField jpfContra;
     private javax.swing.JPasswordField jpfRepetir;

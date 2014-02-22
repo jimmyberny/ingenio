@@ -5,9 +5,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -36,10 +33,6 @@ public class Usuario implements Serializable {
     private String usuario;
     @Column
     private String clave;
-    @OneToOne(optional = true)
-    @JoinColumn(name = "id_supervisor")
-    @MapsId
-    private Supervisor supervisor;
 
     public Usuario() {
     }
@@ -90,14 +83,6 @@ public class Usuario implements Serializable {
 
     public void setClave(String clave) {
         this.clave = clave;
-    }
-
-    public Supervisor getSupervisor() {
-        return supervisor;
-    }
-
-    public void setSupervisor(Supervisor supervisor) {
-        this.supervisor = supervisor;
     }
 
     @Override
