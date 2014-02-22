@@ -29,7 +29,7 @@
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
     <!-- =============== IMPORTANTE ================= -->
     <!-- Su configuracion de base de datos va aqui, supongo que solo cambien el usuario y la contraseña -->
-    <property name="connection.url">jdbc:mysql://localhost:3306/siem</property>
+    <property name="connection.url">jdbc:mysql://localhost:3306/ingenio</property>
     <property name="connection.username">root</property>
     <property name="connection.password">root</property>
     <property name="current_session_context_class">thread</property>
@@ -43,6 +43,17 @@
     <property name="show_sql">true</property>
     <!-- Mapeos -->
     <!-- Deben agregar aqui, el nombre canonico de la clase, para que hibernate lo mappee -->
+    <mapping class="com.ingenio.modelo.Actividad" />
+    <mapping class="com.ingenio.modelo.ActividadCiclo" />
+    <mapping class="com.ingenio.modelo.Ciclo" />
+    <mapping class="com.ingenio.modelo.Contrato" />
+    <mapping class="com.ingenio.modelo.Organizacion" />
+    <mapping class="com.ingenio.modelo.Productor" />
+    <mapping class="com.ingenio.modelo.ReporteSemanal" />
+    <mapping class="com.ingenio.modelo.Sector" />
+    <mapping class="com.ingenio.modelo.Supervisor" />
+    <mapping class="com.ingenio.modelo.Zafra" />
+    <mapping class="com.ingenio.modelo.Zona" />
     <mapping class="com.ingenio.modelo.Usuario" />
   </session-factory>
 </hibernate-configuration>

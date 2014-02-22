@@ -141,9 +141,12 @@ public class Agenda extends AplicacionFrame {
 
         tmMenu = new mx.com.ledi.gui.menu.TreeMenu();
         jpContenido = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        btnMenu = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("Agenda SIEM");
+        setTitle("Ingenio Centra Progreso");
 
         tmMenu.setPreferredSize(new java.awt.Dimension(220, 563));
         getContentPane().add(tmMenu, java.awt.BorderLayout.LINE_START);
@@ -151,10 +154,34 @@ public class Agenda extends AplicacionFrame {
         jpContenido.setLayout(new java.awt.CardLayout());
         getContentPane().add(jpContenido, java.awt.BorderLayout.CENTER);
 
+        jPanel1.setPreferredSize(new java.awt.Dimension(100, 36));
+        getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
+
+        jPanel2.setPreferredSize(new java.awt.Dimension(100, 34));
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 2));
+
+        btnMenu.setText("Menu");
+        btnMenu.setPreferredSize(new java.awt.Dimension(94, 30));
+        btnMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMenuActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnMenu);
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuActionPerformed
+        tmMenu.setVisible(!tmMenu.isVisible());
+    }//GEN-LAST:event_btnMenuActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnMenu;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jpContenido;
     private mx.com.ledi.gui.menu.TreeMenu tmMenu;
     // End of variables declaration//GEN-END:variables

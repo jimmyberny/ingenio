@@ -36,10 +36,10 @@ public class Usuario implements Serializable {
     private String usuario;
     @Column
     private String clave;
-    @OneToOne(optional = true)
-    @JoinColumn(name = "id_supervisor")
-    @MapsId
-    private Supervisor supervisor;
+    // @OneToOne(optional = true)
+    // @JoinColumn(name = "id_supervisor")
+    // @MapsId
+    // private Supervisor supervisor;
 
     public Usuario() {
     }
@@ -90,14 +90,6 @@ public class Usuario implements Serializable {
 
     public void setClave(String clave) {
         this.clave = clave;
-    }
-
-    public Supervisor getSupervisor() {
-        return supervisor;
-    }
-
-    public void setSupervisor(Supervisor supervisor) {
-        this.supervisor = supervisor;
     }
 
     @Override
