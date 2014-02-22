@@ -61,6 +61,7 @@ public class Agenda extends AplicacionFrame {
 		menu.addItem("title.canas", AgendaClaves.CANAS);
 		menu.addItem("title.zafras", AgendaClaves.ZAFRAS);
 		menu.addItem("title.actividades", AgendaClaves.ACTIVIDADES);
+		menu.addItem("title.ciclos", AgendaClaves.CICLOS);
 		menu.closeSub();
 		
 		menu.menu("Acerca de");
