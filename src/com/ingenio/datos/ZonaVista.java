@@ -1,7 +1,7 @@
 package com.ingenio.datos;
 
 import com.ingenio.app.gui.CatalogoPanel;
-import com.ingenio.modelo.Usuario;
+import com.ingenio.modelo.Zona;
 import mx.com.ledi.database.ListaProvider;
 import mx.com.ledi.database.Saver;
 import mx.com.ledi.interfaces.DataProvider;
@@ -11,7 +11,7 @@ import mx.com.ledi.interfaces.Editor;
  *
  * @author Tony Stark -- Ironman --
  */
-public class UsuarioVista extends CatalogoPanel<Usuario> {
+public class ZonaVista extends CatalogoPanel<Zona> {
 
     @Override
     protected void inicializar() {
@@ -19,29 +19,29 @@ public class UsuarioVista extends CatalogoPanel<Usuario> {
     }
 
     @Override
-    protected Editor<Usuario> getEditor() {
-        return new UsuarioEditor(app, monitor);
+    protected Editor<Zona> getEditor() {
+        return new ZonaEditor(app, monitor);
     }
 
     @Override
-    protected Saver<Usuario> getSaver() {
-        return new Saver<Usuario>(app);
+    protected Saver<Zona> getSaver() {
+        return new Saver<Zona>(app);
     }
 
     @Override
-    protected DataProvider<Usuario> getProvider() {
-        return new ListaProvider<Usuario>(app) {
+    protected DataProvider<Zona> getProvider() {
+        return new ListaProvider<Zona>(app) {
 
             @Override
             public Class getClase() {
-                return Usuario.class;
+                return Zona.class;
             }
         };
     }
 
     @Override
     public String getTitle() {
-        return "Usuarios";
+        return "Zonas";
     }
 
 }

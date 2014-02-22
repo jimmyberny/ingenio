@@ -16,8 +16,8 @@ public abstract class ArchivoConfiguracion {
 
 	public static final Logger log = LoggerFactory.getLogger(ArchivoConfiguracion.class);
 
-	private File archivo;
-	private Properties props;
+	private final File archivo;
+	private final Properties props;
 
 	public ArchivoConfiguracion(String nombreArchivo) {
 		archivo = new File(String.format("%s%s%s",

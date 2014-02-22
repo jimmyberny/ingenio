@@ -13,10 +13,10 @@ import org.hibernate.annotations.GenericGenerator;
  * @author None
  */
 @Entity
-@Table(name = "zona")
-public class Zona implements Serializable {
+@Table(name = "cana")
+public class Cana implements Serializable {
 
-    private static final long serialVersionUID = 456234896782L;
+    private static final long serialVersionUID = 4096546782L;
 
     @Id
     @GeneratedValue(generator = "uuid")
@@ -27,7 +27,7 @@ public class Zona implements Serializable {
     @Column
     private String descripcion;
 
-    public Zona() {
+    public Cana() {
     }
 
     public String getId() {
@@ -52,11 +52,6 @@ public class Zona implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    @Override
-    public String toString() {
-        return nombre;
     }
 
 }

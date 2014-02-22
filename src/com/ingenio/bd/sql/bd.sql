@@ -89,6 +89,15 @@ create table actividad_ciclo (
 	constraint fk_ac_actividad foreign key(id_actividad) references actividad(id)
 ) engine innodb;
 
+-- Son las personas encargadas de una zona
+-- por defecto tienen un usuario
+create table supervisor (
+	id varchar(40) not null,
+	id_zona varchar(40) not null,
+	constraint pk_supervisor primary key(id),
+	constraint fk_sup_zona foreign key(id_zona) references zona(id)
+) engine innodb;
+
 -- Los usuarios que tienen acceso a la aplicación
 create table usuario (
 	id varchar(40) not null,
@@ -97,17 +106,9 @@ create table usuario (
 	materno varchar(120) null,
 	usuario varchar(40) not null,
 	clave varchar(40) not null,
-	constraint pk_usuario primary key(id)
-) engine innodb;
-
--- Son las personas encargadas de una zona
--- por defecto tienen un usuario
-create table supervisor (
-	id_usuario varchar(40) not null,
-	id_zona varchar(40) not null,
-	constraint pk_supervisor primary key(id_usuario),
-	constraint fk_sup_zona foreign key(id_zona) references zona(id),
-	constraint fk_s_u_usuario foreign key(id_usuario) references usuario(id)
+	id_supervisor varchar(40) null,
+	constraint pk_usuario primary key(id),
+    constraint fk_u_s_supervisor foreign key(id_supervisor) references supervisor(id)
 ) engine innodb;
 
 -- Es el reporte de actividades para determinada ciclo de actividades
@@ -125,12 +126,13 @@ create table reporte_semanal (
 	constraint pk_reporte_semanal primary key(id),
 	constraint fk_rs_ac_actividad foreign key(id_actividad_ciclo) references actividad_ciclo(id),
 	constraint fk_rs_z_zona foreign key(id_zona) references zona(id),
-	constraint fk_rs_s_supervisor foreign key(id_supervisor) references supervisor(id_usuario)
+	constraint fk_rs_s_supervisor foreign key(id_supervisor) references supervisor(id)
 ) engine innodb;
 
 create table cana (
 	id varchar(40) not null,
 	nombre varchar(40) not null,
+	descripcion varchar(255) not null,
 	constraint pk_cana primary key(id)
 ) engine innodb;
 
