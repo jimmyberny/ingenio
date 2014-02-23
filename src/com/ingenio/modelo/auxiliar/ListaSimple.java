@@ -10,7 +10,7 @@ import javax.swing.AbstractListModel;
 public class ListaSimple<T> extends AbstractListModel {
 
     private List<T> datos;
-    
+
     public ListaSimple() {
     }
 
@@ -21,13 +21,17 @@ public class ListaSimple<T> extends AbstractListModel {
     public void setList(List<T> datos) {
         int last = this.datos != null ? this.datos.size() : 0;
         this.datos = datos;
-        
+
         fireContentsChanged(datos, 0, last);
     }
 
     @Override
     public int getSize() {
         return datos != null ? datos.size() : 0;
+    }
+
+    public T get(int index) {
+        return (T) getElementAt(index);
     }
 
     @Override

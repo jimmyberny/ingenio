@@ -1,6 +1,7 @@
 package com.ingenio.datos;
 
 import com.ingenio.app.AgendaClaves;
+import com.ingenio.modelo.Supervisor;
 import com.ingenio.modelo.Usuario;
 import com.ingenio.modelo.Zona;
 import com.ingenio.modelo.auxiliar.ListaSimple;
@@ -11,6 +12,8 @@ import mx.com.ledi.error.AppException;
 import mx.com.ledi.interfaces.Editor;
 import mx.com.ledi.interfaces.gui.Aplicacion;
 import mx.com.ledi.interfaces.listeners.MonitorListener;
+import mx.com.ledi.msg.AppMensaje;
+import mx.com.ledi.util.Format;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +30,7 @@ public class UsuarioEditor extends Editor<Usuario> {
     private OrigenGeneral oGeneral;
     //
     private ListaSimple<Zona> lZonas;
+    private Supervisor supervisor;
 
     public UsuarioEditor(Aplicacion app, MonitorListener monitor) {
         initComponents();
@@ -50,6 +54,8 @@ public class UsuarioEditor extends Editor<Usuario> {
     @Override
     public void initNoItem() {
         usuario = null;
+        supervisor = null;
+
         limpiar();
         setActivo(false);
     }
@@ -57,6 +63,8 @@ public class UsuarioEditor extends Editor<Usuario> {
     @Override
     public void initItem() {
         usuario = new Usuario();
+        supervisor = null;
+
         limpiar();
         setActivo(true);
     }
@@ -81,10 +89,14 @@ public class UsuarioEditor extends Editor<Usuario> {
         jtfMaterno.setText(usuario.getMaterno());
         jtfUsuario.setText(usuario.getUsuario());
         jpfContra.setText(usuario.getClave());
+
         try {
-            // Stuff about idnk
+                // Stuff about idnk
             // Listar las zonas sin supervisor
             lZonas.setList(oGeneral.listarZonasSinSupervisor());
+            supervisor = oGeneral.getSupervisor(usuario);
+            Zona zona = supervisor != null ? supervisor.getZona() : null;
+            jtfZonaAsignada.setText(Format.OBJECT.format(zona));
         } catch (AppException ex) {
             log.error(ex.getMessage(), ex);
         }
@@ -121,7 +133,7 @@ public class UsuarioEditor extends Editor<Usuario> {
         jtfPaterno.setEnabled(activo);
         jtfMaterno.setEnabled(activo);
         jtfUsuario.setEnabled(activo);
-        
+
         jpfContra.setEnabled(activo);
         jpfRepetir.setEnabled(activo);
         jpfAnterior.setEnabled(activo);
@@ -138,7 +150,7 @@ public class UsuarioEditor extends Editor<Usuario> {
         jtfPaterno.setText(null);
         jtfMaterno.setText(null);
         jtfUsuario.setText(null);
-        
+
         jpfContra.setText(null);
         jpfRepetir.setText(null);
         jpfAnterior.setText(null);
@@ -148,8 +160,8 @@ public class UsuarioEditor extends Editor<Usuario> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel2 = new javax.swing.JPanel();
+        jtPanels = new javax.swing.JTabbedPane();
+        jpUsuarios = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jtfNombre = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
@@ -164,11 +176,11 @@ public class UsuarioEditor extends Editor<Usuario> {
         jtfMaterno = new javax.swing.JTextField();
         jpfRepetir = new javax.swing.JPasswordField();
         jpfContra = new javax.swing.JPasswordField();
-        jPanel3 = new javax.swing.JPanel();
+        jpSupervisor = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jlZonas = new javax.swing.JList();
         jLabel8 = new javax.swing.JLabel();
-        jtfNombre1 = new javax.swing.JTextField();
+        jtfZonaAsignada = new javax.swing.JTextField();
         jbDejar = new javax.swing.JButton();
         jbAsignar = new javax.swing.JButton();
 
@@ -216,78 +228,78 @@ public class UsuarioEditor extends Editor<Usuario> {
 
         jpfContra.setPreferredSize(new java.awt.Dimension(200, 30));
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout jpUsuariosLayout = new javax.swing.GroupLayout(jpUsuarios);
+        jpUsuarios.setLayout(jpUsuariosLayout);
+        jpUsuariosLayout.setHorizontalGroup(
+            jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpUsuariosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpUsuariosLayout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jtfPaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(jpUsuariosLayout.createSequentialGroup()
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jtfMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(jpUsuariosLayout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jtfUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(jpUsuariosLayout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jpfContra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(jpUsuariosLayout.createSequentialGroup()
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jpfRepetir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(jpUsuariosLayout.createSequentialGroup()
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jpfAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(jpUsuariosLayout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jtfNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(376, 376, 376))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        jpUsuariosLayout.setVerticalGroup(
+            jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpUsuariosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtfNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtfPaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtfMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtfUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jpfContra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jpfRepetir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jpfAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Usuario", jPanel2);
+        jtPanels.addTab("Usuario", jpUsuarios);
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Zonas sin supervisor"));
 
@@ -298,39 +310,50 @@ public class UsuarioEditor extends Editor<Usuario> {
         jLabel8.setText("Zona asignada");
         jLabel8.setPreferredSize(new java.awt.Dimension(140, 30));
 
-        jtfNombre1.setPreferredSize(new java.awt.Dimension(200, 30));
+        jtfZonaAsignada.setEditable(false);
+        jtfZonaAsignada.setPreferredSize(new java.awt.Dimension(200, 30));
 
         jbDejar.setText("Dejar asignación");
         jbDejar.setPreferredSize(new java.awt.Dimension(160, 28));
+        jbDejar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbDejarActionPerformed(evt);
+            }
+        });
 
         jbAsignar.setText("Asignar");
         jbAsignar.setPreferredSize(new java.awt.Dimension(160, 28));
+        jbAsignar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbAsignarActionPerformed(evt);
+            }
+        });
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout jpSupervisorLayout = new javax.swing.GroupLayout(jpSupervisor);
+        jpSupervisor.setLayout(jpSupervisorLayout);
+        jpSupervisorLayout.setHorizontalGroup(
+            jpSupervisorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpSupervisorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jtfNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jpSupervisorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtfZonaAsignada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jbDejar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jbAsignar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(114, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        jpSupervisorLayout.setVerticalGroup(
+            jpSupervisorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpSupervisorLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jpSupervisorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpSupervisorLayout.createSequentialGroup()
+                        .addGroup(jpSupervisorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jtfNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jtfZonaAsignada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jbDejar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -339,10 +362,41 @@ public class UsuarioEditor extends Editor<Usuario> {
                 .addContainerGap(123, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Supervisor", jPanel3);
+        jtPanels.addTab("Supervisor", jpSupervisor);
 
-        add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+        add(jtPanels, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jbDejarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDejarActionPerformed
+        //
+        if (supervisor != null) {
+            try {
+                oGeneral.removerAsignacion(supervisor);
+                mostrar(); // actualizar la informacion
+                new AppMensaje("Asignación removida.").mostrar(this);
+            } catch (AppException ex) {
+                new AppMensaje("No se pudo remover la asignación.", ex).mostrar(this);
+            }
+        } else {
+            new AppMensaje("No existe una asignación.").mostrar(this);
+        }
+    }//GEN-LAST:event_jbDejarActionPerformed
+
+    private void jbAsignarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAsignarActionPerformed
+        if (supervisor == null) {
+            if (jlZonas.getSelectedIndex() != -1) {
+                try {
+                    oGeneral.asignar(usuario, lZonas.get(jlZonas.getSelectedIndex()));
+                    mostrar(); // actualizar la informacion
+                    new AppMensaje("Asignación guardada.").mostrar(this);
+                } catch (AppException ex) {
+                    new AppMensaje("No se ha podido guardar la asignacion.", ex).mostrar(this);
+                }
+            }
+        } else {
+            new AppMensaje("Ya existe una asignación.").mostrar(this);
+        }
+    }//GEN-LAST:event_jbAsignarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -354,21 +408,21 @@ public class UsuarioEditor extends Editor<Usuario> {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton jbAsignar;
     private javax.swing.JButton jbDejar;
     private javax.swing.JList jlZonas;
+    private javax.swing.JPanel jpSupervisor;
+    private javax.swing.JPanel jpUsuarios;
     private javax.swing.JPasswordField jpfAnterior;
     private javax.swing.JPasswordField jpfContra;
     private javax.swing.JPasswordField jpfRepetir;
+    private javax.swing.JTabbedPane jtPanels;
     private javax.swing.JTextField jtfMaterno;
     private javax.swing.JTextField jtfNombre;
-    private javax.swing.JTextField jtfNombre1;
     private javax.swing.JTextField jtfPaterno;
     private javax.swing.JTextField jtfUsuario;
+    private javax.swing.JTextField jtfZonaAsignada;
     // End of variables declaration//GEN-END:variables
 
 }
