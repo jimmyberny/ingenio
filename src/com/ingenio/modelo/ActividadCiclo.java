@@ -57,4 +57,9 @@ public class ActividadCiclo implements Serializable {
         this.actividad = actividad;
     }
 
+    @Override
+    public String toString() {
+        return actividad.toString();
+    }
+
 }

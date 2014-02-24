@@ -13,41 +13,44 @@ import org.slf4j.LoggerFactory;
  */
 public class JPanelCtrlModelo extends javax.swing.JPanel implements ActionListener {
 
-	private final static Logger log = LoggerFactory.getLogger(JPanelCtrlModelo.class);
-	private final NavegadorDatos nav;
+    private final static Logger log = LoggerFactory.getLogger(JPanelCtrlModelo.class);
+    private final NavegadorDatos nav;
 
-	public JPanelCtrlModelo(NavegadorDatos nav) {
-		initComponents();
-		this.nav = nav;
+    public JPanelCtrlModelo(NavegadorDatos nav) {
+        initComponents();
+        this.nav = nav;
 
-		init(); // Rid off that stupid notification
-	}
+        init(); // Rid off that stupid notification
+    }
 
-	private void init() {
-		jbNuevo.addActionListener(this);
-		jbBorrar.addActionListener(this);
-		jbGuardar.addActionListener(this);
-		jbDescartar.addActionListener(this);
-	}
+    private void init() {
+        jbNuevo.addActionListener(this);
+        jbBorrar.addActionListener(this);
+        jbGuardar.addActionListener(this);
+        jbDescartar.addActionListener(this);
+        
+        jbNuevo.setEnabled(nav.puedeRegistrar());
+        jbBorrar.setEnabled(nav.puedeBorrar());
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		try {
-			if (e.getSource().equals(jbNuevo)) {
-				nav.registrar();
-			} else if (e.getSource().equals(jbBorrar)) {
-				nav.borrar();
-			} else if (e.getSource().equals(jbGuardar)) {
-				nav.guardarCambios();
-			} else if (e.getSource().equals(jbDescartar)) {
-				nav.descartar();
-			}
-		} catch (AppException ex) {
-			new AppMensaje("Error del modelo", ex).mostrar(this);
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        try {
+            if (e.getSource().equals(jbNuevo)) {
+                nav.registrar();
+            } else if (e.getSource().equals(jbBorrar)) {
+                nav.borrar();
+            } else if (e.getSource().equals(jbGuardar)) {
+                nav.guardarCambios();
+            } else if (e.getSource().equals(jbDescartar)) {
+                nav.descartar();
+            }
+        } catch (AppException ex) {
+            new AppMensaje("Error del modelo", ex).mostrar(this);
+        }
+    }
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -56,7 +59,7 @@ public class JPanelCtrlModelo extends javax.swing.JPanel implements ActionListen
         jbGuardar = new javax.swing.JButton();
         jbDescartar = new javax.swing.JButton();
 
-        jbNuevo.setIcon(mx.com.ledi.gui.IconFactory.SET.getSaveIcon());
+        jbNuevo.setIcon(mx.com.ledi.gui.IconFactory.SET.getAddIcon());
         jbNuevo.setToolTipText("Nuevo registro");
         jbNuevo.setPreferredSize(new java.awt.Dimension(40, 40));
 

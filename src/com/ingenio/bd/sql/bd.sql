@@ -76,7 +76,7 @@ create table ciclo (
 	nombre varchar(120) not null,
 	descripcion varchar(255) not null,
 	constraint pk_ciclo_zafra primary key(id, id_zafra),
-	constraint fk_cz_ciclo foreign key(id) references zafra(id)
+	constraint fk_cz_ciclo foreign key(id_zafra) references zafra(id)
 ) engine innodb;
 
 -- Es la relación de actividades a realizar en un ciclo.
@@ -99,6 +99,8 @@ create table usuario (
 	clave varchar(40) not null,
 	constraint pk_usuario primary key(id)
 ) engine innodb;
+
+insert into usuario values('1', 'Admin', 'apaterno', 'amaterno', 'admin', 'admin');
 
 -- Son las personas encargadas de una zona
 -- por defecto tienen un usuario
@@ -146,5 +148,12 @@ create table cultivo (
 	constraint fk_c_p_producto foreign key(id_productor) references productor(id),
 	constraint fk_c_c_cana foreign key(id_cana) references cana(id),
 	constraint fk_c_c_ciclo foreign key(id_ciclo) references ciclo(id)
+) engine innodb;
+
+create table configuracion(
+    id varchar(40) not null,
+    id_zafra_actual varchar(40) not null,
+    constraint pk_aplicacion primary key(id),
+    constraint fk_a_z_zafra foreign key(id_zafra_actual) references zafra(id)
 ) engine innodb;
 

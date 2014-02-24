@@ -11,60 +11,74 @@ import org.hibernate.Session;
  */
 public class Saver<T> {
 
-	private Transaccion registrar;
-	private Transaccion modificar;
-	private Transaccion borrar;
+    public static final Saver NO_SAVER = new Saver();
+    
+    private Transaccion registrar;
+    private Transaccion modificar;
+    private Transaccion borrar;
 
-	public Saver(Aplicacion app) {
-		registrar = new Transaccion(app.getFactory()) {
+    private Saver() {
+        registrar = null;
+        modificar = null;
+        borrar = null;
+    }
 
-			@Override
-			public Object execInTransaction(Session s, Object... params) throws AppException {
-				s.save(params[0]);
-				return true;
-			}
-		};
+    public Saver(Aplicacion app) {
+        registrar = new Transaccion(app.getFactory()) {
 
-		modificar = new Transaccion(app.getFactory()) {
+            @Override
+            public Object execInTransaction(Session s, Object... params) throws AppException {
+                s.save(params[0]);
+                return true;
+            }
+        };
 
-			@Override
-			public Object execInTransaction(Session s, Object... params) throws AppException {
-				s.update(params[0]);
-				return true;
-			}
-		};
+        modificar = new Transaccion(app.getFactory()) {
 
-		borrar = new Transaccion(app.getFactory()) {
+            @Override
+            public Object execInTransaction(Session s, Object... params) throws AppException {
+                s.update(params[0]);
+                return true;
+            }
+        };
 
-			@Override
-			public Object execInTransaction(Session s, Object... params) throws AppException {
-				s.delete(params[0]);
-				return true;
-			}
-		};
-	}
+        borrar = new Transaccion(app.getFactory()) {
 
-	public boolean registrar(T item) throws AppException {
-		return (Boolean) registrar.exec(item);
-	}
+            @Override
+            public Object execInTransaction(Session s, Object... params) throws AppException {
+                s.delete(params[0]);
+                return true;
+            }
+        };
+    }
 
-	public boolean modificar(T item) throws AppException {
-		return (Boolean) modificar.exec(item);
-	}
+    public Saver(Transaccion registrar, Transaccion modificar, Transaccion borrar) {
+        this.registrar = registrar;
+        this.modificar = modificar;
+        this.borrar = borrar;
+    }
 
-	public boolean borrar(T item) throws AppException {
-		return (Boolean) borrar.exec(item);
-	}
+    public boolean registrar(T item) throws AppException {
+        return (Boolean) registrar.exec(item);
+    }
 
-	public boolean puedeRegistrar() {
-		return registrar != null;
-	}
+    public boolean modificar(T item) throws AppException {
+        return (Boolean) modificar.exec(item);
+    }
 
-	public boolean puedeModificar() {
-		return modificar != null;
-	}
+    public boolean borrar(T item) throws AppException {
+        return (Boolean) borrar.exec(item);
+    }
 
-	public boolean puedeBorrar() {
-		return borrar != null;
-	}
+    public boolean puedeRegistrar() {
+        return registrar != null;
+    }
+
+    public boolean puedeModificar() {
+        return modificar != null;
+    }
+
+    public boolean puedeBorrar() {
+        return borrar != null;
+    }
 }

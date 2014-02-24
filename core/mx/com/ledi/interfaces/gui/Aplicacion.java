@@ -1,5 +1,6 @@
 package mx.com.ledi.interfaces.gui;
 
+import com.ingenio.modelo.Usuario;
 import mx.com.ledi.gui.menu.MenuUtil;
 import org.hibernate.SessionFactory;
 
@@ -9,13 +10,15 @@ import org.hibernate.SessionFactory;
  */
 public interface Aplicacion {
 
-	public SessionFactory getFactory();
-	
-	public MenuUtil getMenu();
+    public SessionFactory getFactory();
 
-	public void mostrarTarea(String tarea);
+    public MenuUtil getMenu();
 
-	public AplicacionBean getBean(Class clazz);
+    public void mostrarTarea(String tarea);
 
-	public AplicacionBean getBean(String className);
+    public AplicacionBean getBean(Class clazz);
+
+    public AplicacionBean getBean(String className);
+    
+    public Usuario getUsuario();
 }

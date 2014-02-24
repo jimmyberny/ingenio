@@ -70,4 +70,24 @@ public class IconosPorDefecto implements IconSet {
         return getIcon("database_refresh.png");
     }
 
+    @Override
+    public ImageIcon getFindIcon() {
+        return getIcon("google_custom_search.png");
+    }
+
+    @Override
+    public ImageIcon getCancelIcon() {
+        return getIcon("cancel.png");
+    }
+
+    @Override
+    public ImageIcon getExecuteIcon() {
+        return getIcon("lightning.png");
+    }
+
+    @Override
+    public ImageIcon getOkIcon() {
+        return getIcon("tick_octagon.png");
+    }
+
 }

@@ -36,7 +36,7 @@ public class ReporteSemanal implements Serializable {
     @ManyToOne
     @JoinColumn(name = "id_supervisor")
     private Supervisor supervisor;
-    @Column
+    @Column(name = "fecha_reporte")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaReporte;
     @ManyToOne
@@ -135,4 +135,10 @@ public class ReporteSemanal implements Serializable {
         this.semana = semana;
     }
 
+    public Double getCumplimiento() {
+        if (avance != null && programa != null && programa.doubleValue() != 0) {
+            return avance / programa;
+        }
+        return null;
+    }
 }

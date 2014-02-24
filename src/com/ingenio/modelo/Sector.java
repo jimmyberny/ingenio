@@ -57,4 +57,9 @@ public class Sector implements Serializable {
         this.clave = clave;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s: %s", zona, clave);
+    }
+
 }

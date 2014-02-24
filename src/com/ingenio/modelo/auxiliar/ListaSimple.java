@@ -1,5 +1,6 @@
 package com.ingenio.modelo.auxiliar;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractListModel;
 
@@ -10,6 +11,7 @@ import javax.swing.AbstractListModel;
 public class ListaSimple<T> extends AbstractListModel {
 
     private List<T> datos;
+    private boolean enlazado = true;
 
     public ListaSimple() {
     }
@@ -19,10 +21,32 @@ public class ListaSimple<T> extends AbstractListModel {
     }
 
     public void setList(List<T> datos) {
-        int last = this.datos != null ? this.datos.size() : 0;
+        if (datos == null) {
+            datos = new ArrayList<>(5);
+            enlazado = false;
+        }
         this.datos = datos;
+        fireContentsChanged(datos, 0, datos.size());
+    }
 
-        fireContentsChanged(datos, 0, last);
+    public void add(T item) {
+        int s = datos.size();
+        datos.add(item);
+        fireIntervalAdded(this, s, s);
+    }
+
+    public void remove(int idx) {
+        datos.remove(idx);
+        fireIntervalRemoved(this, idx, idx);
+    }
+
+    public void update(int idx) {
+        fireContentsChanged(this, idx, idx);
+    }
+    
+    public void update(T item) {
+        int pos = datos.indexOf(item);
+        update(pos);
     }
 
     @Override
@@ -39,4 +63,15 @@ public class ListaSimple<T> extends AbstractListModel {
         return datos != null ? datos.get(index) : null;
     }
 
+    public boolean isEnlazado() {
+        return enlazado;
+    }
+
+    public boolean contains(T o) {
+        return datos.contains(o);
+    }
+
+    public List<T> getDatos() {
+        return datos;
+    }
 }

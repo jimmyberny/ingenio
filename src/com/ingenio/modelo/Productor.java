@@ -3,10 +3,12 @@ package com.ingenio.modelo;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -19,6 +21,10 @@ public class Productor implements Serializable {
     private static final long serialVersionUID = 443979752L;
 
     @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String id;
+    @Column
     private String clave;
     @Column
     private String nombre;
@@ -40,6 +46,14 @@ public class Productor implements Serializable {
     private Sector sector;
 
     public Productor() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getClave() {
@@ -104,6 +118,13 @@ public class Productor implements Serializable {
 
     public void setSector(Sector sector) {
         this.sector = sector;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s - %s %s %s",
+                clave, nombre, paterno,
+                (materno != null ? materno : ""));
     }
 
 }

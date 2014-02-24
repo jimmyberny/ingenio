@@ -223,4 +223,18 @@ public class NavegadorDatos<T> {
 		}
 	}
 
+    public boolean puedeRegistrar() {
+        return modelo.puedeRegistrar();
+    }
+
+    public boolean puedeModificar() {
+        return modelo.puedeModificar();
+    }
+
+    public boolean puedeBorrar() {
+        return modelo.puedeBorrar();
+    }
+        
+        
+
 }

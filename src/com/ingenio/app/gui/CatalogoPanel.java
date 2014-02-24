@@ -97,7 +97,7 @@ public abstract class CatalogoPanel<T> extends javax.swing.JPanel implements Apl
 		}
 	}
 
-	protected abstract void inicializar();
+	protected abstract void inicializar() throws AppException;
 
 	protected abstract Editor<T> getEditor();
 

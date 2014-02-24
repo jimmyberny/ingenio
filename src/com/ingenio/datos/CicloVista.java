@@ -6,6 +6,9 @@ import mx.com.ledi.database.ListaProvider;
 import mx.com.ledi.database.Saver;
 import mx.com.ledi.interfaces.DataProvider;
 import mx.com.ledi.interfaces.Editor;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.criterion.Order;
 
 /**
  *
@@ -25,12 +28,20 @@ public class CicloVista extends CatalogoPanel<Ciclo> {
 
     @Override
     protected Saver<Ciclo> getSaver() {
-        return new Saver<Ciclo>(app);
+        return new Saver<>(app);
     }
 
     @Override
     protected DataProvider<Ciclo> getProvider() {
         return new ListaProvider<Ciclo>(app) {
+
+            @Override
+            protected void decorate(Criteria cr) {
+                cr.setFetchMode("zafra", FetchMode.JOIN)
+                        .addOrder(Order.asc("nombre"))
+                        .createCriteria("zafra").addOrder(Order.asc("nombre"));
+
+            }
 
             @Override
             public Class getClase() {

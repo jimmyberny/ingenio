@@ -21,6 +21,14 @@ public interface IconSet {
     public ImageIcon getDeleteIcon();
 
     public ImageIcon getDownloadIcon();
-    
+
     public ImageIcon getResetIcon();
+
+    public ImageIcon getFindIcon();
+
+    public ImageIcon getCancelIcon();
+
+    public ImageIcon getExecuteIcon();
+
+    public ImageIcon getOkIcon();
 }

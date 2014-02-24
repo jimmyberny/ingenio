@@ -6,6 +6,8 @@ import mx.com.ledi.database.ListaProvider;
 import mx.com.ledi.database.Saver;
 import mx.com.ledi.interfaces.DataProvider;
 import mx.com.ledi.interfaces.Editor;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 
 /**
  *
@@ -25,12 +27,17 @@ public class SectorVista extends CatalogoPanel<Sector> {
 
     @Override
     protected Saver<Sector> getSaver() {
-        return new Saver<Sector>(app);
+        return new Saver<>(app);
     }
 
     @Override
     protected DataProvider<Sector> getProvider() {
         return new ListaProvider<Sector>(app) {
+
+            @Override
+            protected void decorate(Criteria cr) {
+                cr.setFetchMode("zona", FetchMode.JOIN);
+            }
 
             @Override
             public Class getClase() {

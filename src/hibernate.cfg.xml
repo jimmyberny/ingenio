@@ -29,9 +29,9 @@
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
     <!-- =============== IMPORTANTE ================= -->
     <!-- Su configuracion de base de datos va aqui, supongo que solo cambien el usuario y la contraseña -->
-    <property name="connection.url">jdbc:mysql://192.168.1.69:3306/ingenio</property>
+    <property name="connection.url">jdbc:mysql://localhost:3306/ingenio</property>
     <property name="connection.username">root</property>
-    <property name="connection.password">l.juji9</property>
+    <property name="connection.password">root</property>
     <property name="current_session_context_class">thread</property>
     <!-- JDBC connection pool (use the built-in) -->
     <property name="connection.pool_size">10</property>
@@ -55,5 +55,7 @@
     <mapping class="com.ingenio.modelo.Zafra" />
     <mapping class="com.ingenio.modelo.Zona" />
     <mapping class="com.ingenio.modelo.Usuario" />
+    <mapping class="com.ingenio.modelo.Cana" />
+    <mapping class="com.ingenio.modelo.Configuracion" />
   </session-factory>
 </hibernate-configuration>
