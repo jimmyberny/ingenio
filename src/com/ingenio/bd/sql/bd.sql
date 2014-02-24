@@ -119,6 +119,7 @@ create table reporte_semanal (
 	id_actividad_ciclo varchar(40) not null,
 	id_zona varchar(40) not null,
 	id_supervisor varchar(40) not null,
+        id_usuario varchar(40) not null,
 	fecha_reporte datetime not null,
 	programa double not null,
 	avance double not null,
@@ -127,7 +128,8 @@ create table reporte_semanal (
 	constraint pk_reporte_semanal primary key(id),
 	constraint fk_rs_ac_actividad foreign key(id_actividad_ciclo) references actividad_ciclo(id),
 	constraint fk_rs_z_zona foreign key(id_zona) references zona(id),
-	constraint fk_rs_s_supervisor foreign key(id_supervisor) references supervisor(id)
+	constraint fk_rs_s_supervisor foreign key(id_supervisor) references supervisor(id),
+        constraint fk_rs_u_usuario foreign key(id_usuario) references usuario(id)
 ) engine innodb;
 
 create table cana (

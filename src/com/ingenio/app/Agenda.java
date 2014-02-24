@@ -108,7 +108,8 @@ public class Agenda extends AplicacionFrame {
                 cache.put(tarea, vista); // Cacching data
                 jpContenido.add(vista.getComponent(), tarea);
             } catch (AppException ex) {
-                log.error(ex.getMessage(), ex);
+                new AppMensaje("No se puede mostrar la tarea", ex).mostrar(this);
+                vista = null; // cortar el ciclo, no intentar mostrar si hubo un error de este tipo
             } catch (ClassNotFoundException ex) {
                 log.error(ex.getMessage(), ex);
             } catch (InstantiationException ex) {
@@ -178,6 +179,7 @@ public class Agenda extends AplicacionFrame {
     
     private void salir() {
         this.usuario = null;
+        cache.clear(); // limpiar las ventanisimas!
         
         tmMenu.setVisible(false);
         jpFooter.setVisible(false);

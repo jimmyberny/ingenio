@@ -60,7 +60,7 @@ public class Supervisor implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("%s - %s", usuario, zona);
+        return String.format("%s %s", usuario, zona);
     }
 
 }
