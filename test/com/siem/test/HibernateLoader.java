@@ -9,19 +9,19 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author José Bernardo Goméz-Andrade
+ * @author None
  */
 public class HibernateLoader {
 
-	public static final Logger log = LoggerFactory.getLogger(HibernateLoader.class);
+    public static final Logger log = LoggerFactory.getLogger(HibernateLoader.class);
 
-	public void test() {
-		SessionFactory sf = new Configuration().configure().buildSessionFactory();
-		Assert.assertNotNull(sf);
+    public void test() {
+        SessionFactory sf = new Configuration().configure().buildSessionFactory();
+        Assert.assertNotNull(sf);
 
-		Session cs = sf.getCurrentSession();
-		Assert.assertNotNull(cs);
-		cs.beginTransaction();
-		cs.getTransaction().commit();
-	}
+        Session cs = sf.getCurrentSession();
+        Assert.assertNotNull(cs);
+        cs.beginTransaction();
+        cs.getTransaction().commit();
+    }
 }

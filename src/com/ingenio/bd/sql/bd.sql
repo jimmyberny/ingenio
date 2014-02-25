@@ -159,3 +159,17 @@ create table configuracion(
     constraint fk_a_z_zafra foreign key(id_zafra_actual) references zafra(id)
 ) engine innodb;
 
+-- Se añade una vista
+create view reporte_anual as 
+select rs.id as id, month(rs.fecha) as mes, year(rs.fecha) as anio, 
+rs.id_actividad_ciclo as id_actividad_ciclo, rs.id_zona as id_zona, z.nombre as nombre_zona,
+rs.avance as avance, rs.programa as programa,
+za.id as id_zafra, za.nombre as nombre_zafra,
+c.id as id_ciclo, c.nombre as nombre_ciclo,
+a.id as id_actividad, a.nombre as nombre_actividad
+from reporte_semanal as rs join zona as z on rs.id_zona = z.id
+join actividad_ciclo as ac on rs.id_actividad_ciclo = ac.id
+join ciclo as c on ac.id_ciclo = c.id
+join zafra as za on c.id_zafra = za.id
+join actividad as a on ac.id_actividad = a.id;
+

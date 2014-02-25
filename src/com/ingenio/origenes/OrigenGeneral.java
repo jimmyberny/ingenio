@@ -14,13 +14,11 @@ import com.ingenio.modelo.Zafra;
 import com.ingenio.modelo.Zona;
 import com.ingenio.modelo.auxiliar.ActividadCicloExt;
 import com.ingenio.modelo.auxiliar.ActividadesPorCiclo;
+import com.ingenio.modelo.auxiliar.ReporteSemanalExt;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import mx.com.ledi.database.Transaccion;
 import mx.com.ledi.database.TransaccionSr;
 import mx.com.ledi.error.AppException;
@@ -243,6 +241,7 @@ public class OrigenGeneral implements AplicacionBean {
     }
 
     public List<ReporteSemanal> listarReportes(final Supervisor supervisor,
+            final Ciclo ciclo,
             final Date inicio,
             final Date fin) throws AppException {
         return (List<ReporteSemanal>) new Transaccion(factory) {
@@ -256,7 +255,28 @@ public class OrigenGeneral implements AplicacionBean {
                         .add(Restrictions.eq("zona", supervisor.getZona()))
                         .add(Restrictions.le("fecha", inicio))
                         .add(Restrictions.lt("fecha", fin)) // No inclusivo
+                        .createCriteria("actividad").add(Restrictions.eq("ciclo", ciclo))
                         .list();
+            }
+        }.exec();
+    }
+
+    public void eliminarReporte(final ReporteSemanalExt reporte) throws AppException {
+        new TransaccionSr(factory) {
+
+            @Override
+            public void execInTransaction(Session s, Object... params) throws AppException {
+                s.delete(reporte.getReporte());
+            }
+        }.exec();
+    }
+    
+    public void guardarReporte(final ReporteSemanalExt reporte) throws AppException {
+        new TransaccionSr(factory) {
+            
+            @Override
+            public void execInTransaction(Session s, Object... params) throws AppException {
+                s.saveOrUpdate(reporte.getReporte());
             }
         }.exec();
     }

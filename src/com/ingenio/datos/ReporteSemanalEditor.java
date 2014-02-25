@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -44,6 +46,8 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
     private ReporteModel modelo;
     private ReporteSemanalExt actividad;
     private Date fecha;
+    private Date inicio;
+    private Date fin;
     private int semana;
 
     public ReporteSemanalEditor(Aplicacion app, MonitorListener monitor, Supervisor supervisor) {
@@ -55,9 +59,14 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
 
         modelo = new ReporteModel(null);
         jtReporte.setModel(modelo);
+        jtReporte.getSelectionModel().addListSelectionListener(new ActividadSelectionListener());
+
         jbFecha.setEditor(jtfFecha, Format.DATE);
 
         jbFecha.addPropertyChangeListener("date", new FechaListener());
+        CumplimientoListener cl = new CumplimientoListener();
+        jtfPrograma.getDocument().addDocumentListener(cl);
+        jtfAvance.getDocument().addDocumentListener(cl);
     }
 
     @Override
@@ -113,9 +122,9 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
         jtfNombre.setText(null);
     }
 
-    private void mostrarReportes(Date inicio, Date fin) {
+    private void mostrarReportes() {
         try {
-            List<ReporteSemanal> reportes = oGeneral.listarReportes(supervisor, inicio, fin);
+            List<ReporteSemanal> reportes = oGeneral.listarReportes(supervisor, ciclo.getCiclo(), inicio, fin);
             Map<String, ReporteSemanal> map = new HashMap<>(reportes.size());
             // Mappear
             for (ReporteSemanal rs : reportes) {
@@ -140,37 +149,76 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
         }
     }
 
+    /**
+     * Inicializa el reporte de una actividad a la información básica.
+     * <p>
+     * Puede ser empleado para dos cosas:
+     * <ul>
+     * <li> Cuando no existe un reporte aún.
+     * <li> Cuando se ha eliminado el reporte que estaba asociado a la
+     * actividad.
+     */
+    private void initReporte() {
+        ReporteSemanal rs = new ReporteSemanal();
+        rs.setActividad(actividad.getActividad());
+        rs.setFecha(fecha);
+        rs.setSupervisor(supervisor);
+        rs.setZona(supervisor.getZona());
+        rs.setSemana(semana);
+        this.actividad.setReporte(rs);
+    }
+
     private void mostrarActividad() {
         if (jtReporte.getSelectionModel().isSelectionEmpty()) {
             return; // No hay nada seleccionado, salir del método
         }
         this.actividad = modelo.getRow(jtReporte.getSelectedRow());
-
-        jtfActividad.setText(actividad.toString()); // Never null
-        ReporteSemanal rs = actividad.getReporte();
-        if (rs != null) {
-            jtfSemana.setText(Format.INTEGER.format(rs.getSemana()));
-            jtfSupervisor.setText(Format.OBJECT.format(rs.getSupervisor()));
-            jtfPrograma.setText(Format.DECIMAL.format(rs.getPrograma()));
-            jtfAvance.setText(Format.DECIMAL.format(rs.getAvance()));
-            jtfCumplimiento.setText(Format.PERCENT.format(rs.getCumplimiento()));
-        } else {
-            rs = new ReporteSemanal();
-            rs.setSupervisor(supervisor);
-            rs.setUsuario(app.getUsuario());
-            rs.setFechaReporte(new Date());
-            rs.setFecha(fecha);
-            rs.setZona(supervisor.getZona());
-            rs.setSemana(semana);
-            this.actividad.setReporte(rs);
-
-            jtfActividad.setText(null);
-            jtfSemana.setText(null);
-            jtfSupervisor.setText(null);
-            jtfPrograma.setText(null);
-            jtfAvance.setText(null);
-            jtfCumplimiento.setText(null);
+        if (actividad.getReporte() == null) {
+            initReporte();
         }
+        ReporteSemanal rs = actividad.getReporte();
+
+        jtfPrograma.setText(Format.DECIMAL.format(rs.getPrograma()));
+        jtfAvance.setText(Format.DECIMAL.format(rs.getAvance()));
+        jtfCumplimiento.setText(Format.PERCENT.format(rs.getCumplimiento()));
+
+        // Datos comunes
+        jtfActividad.setText(actividad.toString()); // Never null
+        jtfSemana.setText(Format.INTEGER.format(rs.getSemana()));
+        jtfSupervisor.setText(Format.OBJECT.format(rs.getSupervisor()));
+    }
+
+    private void calcularCumplimiento() {
+        try {
+            Double programa = Format.DECIMAL.parse(jtfPrograma.getText());
+            if (programa != null && programa.doubleValue() != 0) {
+                Double avance = Format.DECIMAL.parse(jtfAvance.getText(), 0d);
+                jtfCumplimiento.setText(Format.PERCENT.format(avance / programa));
+            } else {
+                jtfCumplimiento.setText(Format.PERCENT.format(0d));
+            }
+        } catch (AppException ex) {
+            // Nothing
+        }
+    }
+
+    private class CumplimientoListener implements DocumentListener {
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            calcularCumplimiento();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            calcularCumplimiento();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            calcularCumplimiento();
+        }
+
     }
 
     private class FechaListener implements PropertyChangeListener {
@@ -180,18 +228,18 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
             Calendar cal = Calendar.getInstance();
             cal.setTime((Date) evt.getNewValue());
 
-            Date inicio = DateUtil.getStartOfDay(cal.getTime());
+            inicio = DateUtil.getStartOfDay(cal.getTime());
             cal.setTime(inicio);
             cal.add(Calendar.DAY_OF_YEAR, Calendar.SUNDAY - cal.get(Calendar.DAY_OF_WEEK));
             inicio = cal.getTime();
-            jtfInicio.setText(Format.DATE.format(inicio));
+            jtfInicio.setText(Format.DATETIME.format(inicio));
 
             cal.add(Calendar.DAY_OF_YEAR, Calendar.SATURDAY - cal.get(Calendar.DAY_OF_WEEK));
-            Date fin = DateUtil.getEndOfDay(cal.getTime());
-            jtfFin.setText(Format.DATE.format(fin));
+            fin = DateUtil.getEndOfDay(cal.getTime());
+            jtfFin.setText(Format.DATETIME.format(fin));
 
             log.info("From {} to {}", inicio, fin);
-            mostrarReportes(inicio, fin);
+            mostrarReportes();
         }
 
     }
@@ -214,6 +262,14 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
 
         public ReporteSemanalExt getRow(int idx) {
             return items.get(idx);
+        }
+
+        public void update(int idx) {
+            fireTableRowsUpdated(idx, idx);
+        }
+
+        public void remove(int pos) {
+            fireTableRowsDeleted(pos, pos);
         }
 
         @Override
@@ -261,7 +317,7 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
                             ? Format.DECIMAL.format(rep.getReporte().getAvance()) : "";
                 case 3:
                     return rep.getReporte() != null
-                            ? Format.DECIMAL.format(rep.getReporte().getCumplimiento()) : "";
+                            ? Format.PERCENT.format(rep.getReporte().getCumplimiento()) : "";
                 default:
                     return "";
             }
@@ -273,9 +329,8 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting()) {
-                mostrarActividad();
-            }
+            log.info("Something happens");
+            mostrarActividad();
         }
 
     }
@@ -301,6 +356,8 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
         jtfSemana = new javax.swing.JTextField();
         jtfSupervisor = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
+        jbGuardar = new javax.swing.JButton();
+        jbEliminar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jtfFecha = new javax.swing.JTextField();
         jbFecha = new mx.com.ledi.util.JCalendarButton();
@@ -319,11 +376,6 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
         jtfNombre.setPreferredSize(new java.awt.Dimension(200, 30));
 
         jtReporte.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jtReporte.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jtReporteMouseClicked(evt);
-            }
-        });
         jspReporte.setViewportView(jtReporte);
 
         jtfActividad.setEditable(false);
@@ -366,6 +418,24 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
         jLabel10.setText("Supervisor");
         jLabel10.setPreferredSize(new java.awt.Dimension(140, 30));
 
+        jbGuardar.setIcon(mx.com.ledi.gui.IconFactory.SET.getSaveIcon());
+        jbGuardar.setText("Guardar");
+        jbGuardar.setPreferredSize(new java.awt.Dimension(120, 30));
+        jbGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbGuardarActionPerformed(evt);
+            }
+        });
+
+        jbEliminar.setIcon(mx.com.ledi.gui.IconFactory.SET.getDeleteIcon());
+        jbEliminar.setText("Eliminar");
+        jbEliminar.setPreferredSize(new java.awt.Dimension(120, 30));
+        jbEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbEliminarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -398,6 +468,12 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jtfSupervisor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jbEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jbGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -424,7 +500,11 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtfCumplimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jbGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jbEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -500,12 +580,13 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jtfNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jtfZona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jtfZona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jtfNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -524,15 +605,44 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
                         .addComponent(jspReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                    .addComponent(jbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jtReporteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtReporteMouseClicked
-        mostrarActividad();
-    }//GEN-LAST:event_jtReporteMouseClicked
+    private void jbEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEliminarActionPerformed
+        if (actividad != null && actividad.getReporte().getId() != null) {
+            try {
+                // do delete
+                oGeneral.eliminarReporte(actividad);
+                initReporte(); // Resetear la información del reporte
+                modelo.update(jtReporte.getSelectedRow());
+                new AppMensaje("El reporte ha sido eliminado exitosamente.").mostrar(this);
+            } catch (AppException ex) {
+                new AppMensaje("Ha sucedido un error en el intento de eliminar el reporte.", ex).mostrar(this);
+            }
+        }
+    }//GEN-LAST:event_jbEliminarActionPerformed
+
+    private void jbGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbGuardarActionPerformed
+        if (actividad != null) {
+            try {
+                ReporteSemanal reporte = actividad.getReporte();
+                reporte.setFechaReporte(new Date());
+                reporte.setUsuario(app.getUsuario());
+
+                reporte.setAvance(Format.DECIMAL.parse(jtfAvance.getText()));
+                reporte.setPrograma(Format.DECIMAL.parse(jtfPrograma.getText()));
+
+                oGeneral.guardarReporte(actividad);
+                modelo.update(jtReporte.getSelectedRow());
+                new AppMensaje("El reporte ha sido guardado exitosamente.").mostrar(this); // Todo bien
+            } catch (AppException ex) {
+                actividad.getReporte().setId(null); // Creo que puedo hacer esto
+                new AppMensaje("Ha sucedido un error en el intento de guardar el reporte.", ex).mostrar(this);
+            }
+        }
+    }//GEN-LAST:event_jbGuardarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -547,7 +657,9 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton jbEliminar;
     private mx.com.ledi.util.JCalendarButton jbFecha;
+    private javax.swing.JButton jbGuardar;
     private javax.swing.JScrollPane jspReporte;
     private javax.swing.JTable jtReporte;
     private javax.swing.JTextField jtfActividad;

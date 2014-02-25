@@ -2,7 +2,7 @@ package com.siem.test;
 
 /**
  *
- * @author José Bernardo Gómez-Andrade
+ * @author Nanny
  */
 public class NannyTest {
 

@@ -1,9 +1,8 @@
 package com.siem.test;
 
-import com.ingenio.modelo.Supervisor;
+import com.ingenio.modelo.ActividadSemana;
 import java.util.List;
 import junit.framework.Assert;
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.classic.Session;
@@ -13,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author José Bernardo Gómez-Andrade
+ * @author None
  */
 public class BernardoTest {
 
@@ -31,9 +30,9 @@ public class BernardoTest {
         Assert.assertNotNull(cs); // Que la session actual no es null
 
         cs.beginTransaction(); // Abrir una transaccion
-        List list = cs.createQuery("from Zona as z where z.id not in (select s.zona from Supervisor as s)").list();
-        for (Object obj : list) {
-            log.info("{}", obj);
+        List<ActividadSemana> ls = cs.createCriteria(ActividadSemana.class).list();
+        for (ActividadSemana as : ls) {
+            log.info("{} {} {} {}", as.getNombreActividad(), as.getNombreZafra(), as.getNombreCiclo(), as.getNombreZona());
         }
         cs.getTransaction().commit();
     }

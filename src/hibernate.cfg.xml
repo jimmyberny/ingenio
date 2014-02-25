@@ -57,5 +57,6 @@
     <mapping class="com.ingenio.modelo.Usuario" />
     <mapping class="com.ingenio.modelo.Cana" />
     <mapping class="com.ingenio.modelo.Configuracion" />
+    <mapping class="com.ingenio.modelo.ActividadSemana" />
   </session-factory>
 </hibernate-configuration>
