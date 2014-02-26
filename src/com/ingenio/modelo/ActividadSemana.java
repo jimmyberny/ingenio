@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import mx.com.ledi.util.DateUtil;
+import mx.com.ledi.util.Format;
 
 /**
  * Field,Type,Null,Key,Default,Extra id,varchar(40),NO,,NULL,
@@ -173,4 +175,17 @@ public class ActividadSemana implements Serializable {
     public void setNombreActividad(String nombreActividad) {
         this.nombreActividad = nombreActividad;
     }
+
+    public Double getCumplimiento() {
+        if (programa != null && programa.doubleValue() != 0) {
+            return avance / programa;
+        } else {
+            return 0d;
+        }
+    }
+
+    public String getStrFecha() {
+        return Format.TIMESTAMP.format(DateUtil.getStart(mes, anio), "MMM-YYYY");
+    }
+
 }

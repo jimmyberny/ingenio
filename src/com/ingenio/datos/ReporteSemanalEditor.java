@@ -1,6 +1,7 @@
 package com.ingenio.datos;
 
 import com.ingenio.app.AgendaClaves;
+import com.ingenio.modelo.ActividadSemana;
 import com.ingenio.modelo.ReporteSemanal;
 import com.ingenio.modelo.Supervisor;
 import com.ingenio.modelo.auxiliar.ActividadCicloExt;
@@ -9,12 +10,25 @@ import com.ingenio.modelo.auxiliar.ReporteSemanalExt;
 import com.ingenio.origenes.OrigenGeneral;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -27,6 +41,14 @@ import mx.com.ledi.interfaces.listeners.MonitorListener;
 import mx.com.ledi.msg.AppMensaje;
 import mx.com.ledi.util.DateUtil;
 import mx.com.ledi.util.Format;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +72,9 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
     private Date fin;
     private int semana;
 
+    //
+    private JasperReport jr;
+
     public ReporteSemanalEditor(Aplicacion app, MonitorListener monitor, Supervisor supervisor) {
         initComponents();
 
@@ -67,6 +92,8 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
         CumplimientoListener cl = new CumplimientoListener();
         jtfPrograma.getDocument().addDocumentListener(cl);
         jtfAvance.getDocument().addDocumentListener(cl);
+
+        cargarReporte(); // 
     }
 
     @Override
@@ -199,6 +226,29 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
             }
         } catch (AppException ex) {
             // Nothing
+        }
+    }
+
+    private void cargarReporte() {
+        InputStream is = getClass().getResourceAsStream("/com/ingenio/app/reporte/mensual.ser");
+        try {
+            if (is == null) {
+                JasperDesign jd = JRXmlLoader.load(
+                        getClass().getResourceAsStream("/com/ingenio/app/reporte/mensual.jrxml"));
+                jr = JasperCompileManager.compileReport(jd);
+
+                OutputStream os = new FileOutputStream("anual.ser");
+                OutputStream bos = new BufferedOutputStream(os, 32);
+                try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+                    oos.writeObject(jr);
+                }
+            } else {
+                try (ObjectInputStream ois = new ObjectInputStream(is)) {
+                    jr = (JasperReport) ois.readObject();
+                }
+            }
+        } catch (ClassNotFoundException | IOException | JRException cnfex) {
+            log.error(cnfex.getMessage(), cnfex);
         }
     }
 
@@ -339,10 +389,9 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jtfNombre = new javax.swing.JTextField();
-        jspReporte = new javax.swing.JScrollPane();
-        jtReporte = new javax.swing.JTable();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel3 = new javax.swing.JPanel();
+        jtfInicio = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jtfActividad = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
@@ -358,25 +407,33 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
         jLabel10 = new javax.swing.JLabel();
         jbGuardar = new javax.swing.JButton();
         jbEliminar = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jtfFecha = new javax.swing.JTextField();
-        jbFecha = new mx.com.ledi.util.JCalendarButton();
-        jLabel3 = new javax.swing.JLabel();
-        jtfInicio = new javax.swing.JTextField();
-        jtfFin = new javax.swing.JTextField();
+        jspReporte = new javax.swing.JScrollPane();
+        jtReporte = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
+        jtfFin = new javax.swing.JTextField();
+        jbFecha = new mx.com.ledi.util.JCalendarButton();
         jLabel12 = new javax.swing.JLabel();
+        jtfNombre = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         jtfZona = new javax.swing.JTextField();
+        jtfFecha = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jbConsultar = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jmcInicio = new com.toedter.calendar.JMonthChooser();
+        jmcFin = new com.toedter.calendar.JMonthChooser();
+        jycIni = new com.toedter.calendar.JYearChooser();
+        jycFin = new com.toedter.calendar.JYearChooser();
+        jrvReporte = new mx.com.ledi.gui.JRViewerExt();
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setText("Ciclo");
-        jLabel1.setPreferredSize(new java.awt.Dimension(140, 30));
+        setLayout(new java.awt.BorderLayout());
 
-        jtfNombre.setEditable(false);
-        jtfNombre.setPreferredSize(new java.awt.Dimension(200, 30));
-
-        jtReporte.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jspReporte.setViewportView(jtReporte);
+        jtfInicio.setEditable(false);
+        jtfInicio.setPreferredSize(new java.awt.Dimension(200, 30));
 
         jtfActividad.setEditable(false);
         jtfActividad.setPreferredSize(new java.awt.Dimension(200, 30));
@@ -507,47 +564,56 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
                 .addContainerGap())
         );
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("Fecha");
-        jLabel2.setPreferredSize(new java.awt.Dimension(140, 30));
+        jspReporte.setPreferredSize(new java.awt.Dimension(453, 200));
 
-        jtfFecha.setEditable(false);
-        jtfFecha.setPreferredSize(new java.awt.Dimension(200, 30));
-
-        jbFecha.setPreferredSize(new java.awt.Dimension(40, 30));
-
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel3.setText("Inicio de semana");
-        jLabel3.setPreferredSize(new java.awt.Dimension(140, 30));
-
-        jtfInicio.setEditable(false);
-        jtfInicio.setPreferredSize(new java.awt.Dimension(200, 30));
-
-        jtfFin.setEditable(false);
-        jtfFin.setPreferredSize(new java.awt.Dimension(200, 30));
+        jtReporte.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jspReporte.setViewportView(jtReporte);
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Fin de semana");
         jLabel4.setPreferredSize(new java.awt.Dimension(140, 30));
 
+        jtfFin.setEditable(false);
+        jtfFin.setPreferredSize(new java.awt.Dimension(200, 30));
+
+        jbFecha.setPreferredSize(new java.awt.Dimension(40, 30));
+
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel12.setText("Zona");
         jLabel12.setPreferredSize(new java.awt.Dimension(140, 30));
 
+        jtfNombre.setEditable(false);
+        jtfNombre.setPreferredSize(new java.awt.Dimension(200, 30));
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel2.setText("Fecha");
+        jLabel2.setPreferredSize(new java.awt.Dimension(140, 30));
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel3.setText("Inicio de semana");
+        jLabel3.setPreferredSize(new java.awt.Dimension(140, 30));
+
         jtfZona.setEditable(false);
         jtfZona.setPreferredSize(new java.awt.Dimension(200, 30));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        jtfFecha.setEditable(false);
+        jtfFecha.setPreferredSize(new java.awt.Dimension(200, 30));
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel1.setText("Ciclo");
+        jLabel1.setPreferredSize(new java.awt.Dimension(140, 30));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jspReporte)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jspReporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jtfInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -555,59 +621,136 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
                                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jtfFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
                                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jtfFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
                                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jtfNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
                                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jtfZona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(jbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jtfZona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jtfNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jtfFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jtfFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jtfInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jspReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jspReporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
+
+        jTabbedPane1.addTab("Reporte semanal", jPanel3);
+
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        jbConsultar.setIcon(mx.com.ledi.gui.IconFactory.SET.getExecuteIcon());
+        jbConsultar.setText("Consultar");
+        jbConsultar.setPreferredSize(new java.awt.Dimension(120, 30));
+        jbConsultar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbConsultarActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel11.setText("Mes inicio");
+        jLabel11.setPreferredSize(new java.awt.Dimension(140, 30));
+
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel13.setText("Mes fin");
+        jLabel13.setPreferredSize(new java.awt.Dimension(140, 30));
+
+        jmcInicio.setPreferredSize(new java.awt.Dimension(120, 30));
+
+        jmcFin.setPreferredSize(new java.awt.Dimension(120, 30));
+
+        jycIni.setPreferredSize(new java.awt.Dimension(60, 30));
+
+        jycFin.setPreferredSize(new java.awt.Dimension(60, 30));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jbConsultar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jmcInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jycIni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jmcFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jycFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jmcInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jmcFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jycIni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jycFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jbConsultar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jPanel2.add(jPanel4, java.awt.BorderLayout.PAGE_START);
+        jPanel2.add(jrvReporte, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Reporte anual", jPanel2);
+
+        add(jTabbedPane1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEliminarActionPerformed
@@ -644,10 +787,39 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
         }
     }//GEN-LAST:event_jbGuardarActionPerformed
 
+    private void jbConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbConsultarActionPerformed
+        if (jr != null) {
+            try {
+                Date mi = DateUtil.getStart(jmcInicio.getMonth(), jycIni.getYear());
+                Date mf = DateUtil.getEnd(jmcFin.getMonth(), jycFin.getYear());
+                /// Hacer la consuta
+                List<ActividadSemana> actividades = oGeneral.listarActividades(mi, mf);
+                Map<String, Object> params = new HashMap<>(4);
+                ResourceBundle bundle = ResourceBundle.getBundle("com/ingenio/app/reporte/mensual", Format.getLocale());
+                // 
+                params.put("STR_FECHA", Format.DATETIME.format(new Date()));
+                params.put("STR_INICIO", Format.DATETIME.format(mi));
+                params.put("STR_FIN", Format.DATETIME.format(mf));
+                params.put("REPORT_RESOURCE_BUNDLE", bundle);
+
+                // 
+                JasperPrint jp = JasperFillManager.fillReport(jr, params, new JRBeanCollectionDataSource(actividades));
+                jrvReporte.update(jp);
+            } catch (JRException | MissingResourceException | AppException ex) {
+                new AppMensaje("Ha sucedido un error al inicializar el reporte", ex).mostrar(this);
+            }
+        } else {
+            new AppMensaje("La plantilla para el reporte no existe").mostrar(this);
+        }
+
+    }//GEN-LAST:event_jbConsultarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -657,9 +829,17 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JButton jbConsultar;
     private javax.swing.JButton jbEliminar;
     private mx.com.ledi.util.JCalendarButton jbFecha;
     private javax.swing.JButton jbGuardar;
+    private com.toedter.calendar.JMonthChooser jmcFin;
+    private com.toedter.calendar.JMonthChooser jmcInicio;
+    private mx.com.ledi.gui.JRViewerExt jrvReporte;
     private javax.swing.JScrollPane jspReporte;
     private javax.swing.JTable jtReporte;
     private javax.swing.JTextField jtfActividad;
@@ -673,6 +853,8 @@ public class ReporteSemanalEditor extends Editor<ActividadesPorCiclo> {
     private javax.swing.JTextField jtfSemana;
     private javax.swing.JTextField jtfSupervisor;
     private javax.swing.JTextField jtfZona;
+    private com.toedter.calendar.JYearChooser jycFin;
+    private com.toedter.calendar.JYearChooser jycIni;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporte_mensual" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" uuid="0e7563a1-8a1a-4190-9762-73478fc5c117">
+	<property name="ireport.zoom" value="1.2396694214876034"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="label" mode="Transparent" hAlign="Left" vAlign="Middle"/>
+	<style name="Title" scaleImage="FillFrame" fontSize="13"/>
+	<style name="encabezado" hAlign="Center" vAlign="Middle" fontSize="20" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica"/>
+	<style name="columna" hAlign="Right" vAlign="Middle" fontSize="14" isBold="true"/>
+	<parameter name="STR_FECHA" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.lang.String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="STR_INICIO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.lang.String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="STR_FIN" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.lang.String("")]]></defaultValueExpression>
+	</parameter>
+	<field name="_THIS" class="com.ingenio.modelo.ActividadSemana"/>
+	<group name="Zafra">
+		<groupExpression><![CDATA[$F{_THIS}.getZafra()]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<textField>
+					<reportElement x="0" y="0" width="120" height="16" uuid="0e37805e-0149-4d45-921d-49971b32aef5"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{_THIS}.getZafra().toString()]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="15" width="300" height="1" uuid="8cad3dd5-03fd-4b1a-bdd5-a82f4945faff"/>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Zona">
+		<groupExpression><![CDATA[$F{_THIS}.getZona()]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<line>
+					<reportElement x="20" y="16" width="300" height="1" uuid="1003740d-6d41-4b6c-b188-4d2c696c4e2a"/>
+				</line>
+				<textField>
+					<reportElement x="20" y="0" width="120" height="16" uuid="9fdaeb81-089c-4219-9c74-d5bd45a0fc0d"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{_THIS}.getZona().toString()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Ciclo">
+		<groupExpression><![CDATA[$F{_THIS}.getCiclo()]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<line>
+					<reportElement x="40" y="16" width="300" height="1" uuid="6cc935fa-0db5-4adb-8879-5bce92deb83b"/>
+				</line>
+				<textField>
+					<reportElement x="40" y="0" width="120" height="16" uuid="bd227c90-42f1-44a2-8739-c542a381db3e"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{_THIS}.getCiclo().toString()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Anio">
+		<groupExpression><![CDATA[$F{_THIS}.getAnio()]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<line>
+					<reportElement x="61" y="16" width="300" height="1" uuid="2eb51aff-aedc-4e4a-be3b-bf4de87598b1"/>
+				</line>
+				<textField>
+					<reportElement x="61" y="0" width="120" height="16" uuid="35aa018b-4bd7-42c4-95b2-61bb5dd52aae"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{_THIS}.getAnio().toString()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="52">
+			<rectangle radius="5">
+				<reportElement x="0" y="0" width="572" height="26" backcolor="#90A9FF" uuid="6ddb3cb5-c78b-4d45-aa41-a0cc2b7429dd"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="572" height="26" forecolor="#FEFEFE" uuid="fb9dcb49-9d64-4ea9-aa57-c172324f0c15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reporte de actividades]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Transparent" x="442" y="30" width="130" height="16" forecolor="#424242" uuid="4d3d52bb-899c-4df5-a930-156a8c80d304"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{STR_FECHA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="20" y="30" width="130" height="16" forecolor="#424242" uuid="3ffe6a9d-9381-43fd-98c8-a3d679a2c3eb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{STR_INICIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="170" y="30" width="130" height="16" forecolor="#424242" uuid="dfc3ab84-5400-48cf-9324-1acb016203ff"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{STR_FIN}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="150" y="30" width="20" height="16" uuid="50f4df80-bcf2-4e5a-b3f7-64c736f328fa"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[al :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="30" width="20" height="16" uuid="0b0c2653-9a45-4cfd-a984-4ac289316ff1"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[Del: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="362" y="30" width="80" height="16" uuid="8c5ca7cb-f525-4189-bd83-0b45e4fa30c3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[Consulta: ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="83">
+			<staticText>
+				<reportElement style="columna" x="0" y="0" width="120" height="16" uuid="6026a559-8b92-4641-a2d4-5c80d9f61783"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Zafra]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="columna" x="20" y="16" width="120" height="16" uuid="5867cd93-3610-4f2d-b530-0eb7b149d7ca"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Zona]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="columna" x="40" y="32" width="120" height="16" uuid="92e1689f-fa78-4561-b275-7f5bdfc9d1c2"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ciclo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="columna" x="61" y="48" width="120" height="16" uuid="5b7d168b-63f0-4c08-9d04-f166f9d87ca4"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Año]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="columna" x="0" y="64" width="120" height="16" uuid="4b29a26e-b3b4-438a-ac9e-2ebd87031b23"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Actividad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="columna" x="120" y="64" width="120" height="16" uuid="d1846572-00e3-4300-9139-7aafd7808f12"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Programa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="columna" x="242" y="64" width="120" height="16" uuid="840d43db-37f8-40b5-9526-fd018643a98b"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Avance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="columna" x="362" y="64" width="120" height="16" uuid="2c4fb799-b712-487c-9a09-f59b2bf1ed46"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cumplimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="columna" x="482" y="64" width="90" height="16" uuid="dc23cb21-b9b8-4f95-b1a0-d9a5a6472170"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="120" height="16" uuid="421c80df-14f9-4954-a77c-755c5ba3e0bc"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{_THIS}.getActividad().toString()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="0" width="120" height="16" uuid="da55d084-7073-4bf6-b05e-76c0cf486f33"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[mx.com.ledi.util.Format.DECIMAL.format($F{_THIS}.getPrograma())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="242" y="0" width="119" height="16" uuid="e56e0e7d-cac0-4722-a1d7-16af4d9d299f"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[mx.com.ledi.util.Format.DECIMAL.format($F{_THIS}.getAvance())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="362" y="0" width="119" height="16" uuid="56d4cc28-b5ed-4ee7-970a-0d405dd1a643"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[mx.com.ledi.util.Format.PERCENT.format($F{_THIS}.getCumplimiento())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="482" y="0" width="90" height="16" uuid="2926b20e-1d79-420e-b78d-a492402e56bf"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{_THIS}.getStrFecha()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

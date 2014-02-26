@@ -2,6 +2,7 @@ package com.ingenio.origenes;
 
 import com.ingenio.modelo.Actividad;
 import com.ingenio.modelo.ActividadCiclo;
+import com.ingenio.modelo.ActividadSemana;
 import com.ingenio.modelo.Ciclo;
 import com.ingenio.modelo.Configuracion;
 import com.ingenio.modelo.Contrato;
@@ -29,6 +30,8 @@ import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -270,13 +273,53 @@ public class OrigenGeneral implements AplicacionBean {
             }
         }.exec();
     }
-    
+
     public void guardarReporte(final ReporteSemanalExt reporte) throws AppException {
         new TransaccionSr(factory) {
-            
+
             @Override
             public void execInTransaction(Session s, Object... params) throws AppException {
                 s.saveOrUpdate(reporte.getReporte());
+            }
+        }.exec();
+    }
+
+    public List<ActividadSemana> listarActividades(final Date inicio, final Date fin) throws AppException {
+        return (List<ActividadSemana>) new Transaccion(factory) {
+
+            @Override
+            public Object execInTransaction(Session s, Object... params) throws AppException {
+                List<Object[]> list = s.createCriteria(ActividadSemana.class)
+                        .setProjection(Projections.projectionList()
+                                .add(Projections.property("mes"), "mes")
+                                .add(Projections.property("anio"), "anio")
+                                .add(Projections.sum("programa"))
+                                .add(Projections.sum("avance"))
+                                .add(Projections.groupProperty("zafra"), "zafra")
+                                .add(Projections.groupProperty("zona"), "zona")
+                                .add(Projections.groupProperty("ciclo"), "ciclo")
+                                .add(Projections.groupProperty("actividad"), "actividad"))
+                        .addOrder(Order.asc("zafra"))
+                        .addOrder(Order.asc("zona"))
+                        .addOrder(Order.asc("ciclo"))
+                        .addOrder(Order.asc("actividad"))
+                        .addOrder(Order.asc("anio"))
+                        .addOrder(Order.asc("mes")).list();
+                
+                List<ActividadSemana> actividades = new ArrayList<>(list.size());
+                for (Object[] arr : list) {
+                    ActividadSemana am = new ActividadSemana();
+                    am.setMes((Integer) arr[0]);
+                    am.setAnio((Integer) arr[1]);
+                    am.setPrograma((Double) arr[2]);
+                    am.setAvance((Double) arr[3]);
+                    am.setZafra((Zafra) arr[4]);
+                    am.setZona((Zona) arr[5]);
+                    am.setCiclo((Ciclo) arr[6]);
+                    am.setActividad((Actividad) arr[7]);
+                    actividades.add(am);
+                }
+                return actividades;
             }
         }.exec();
     }

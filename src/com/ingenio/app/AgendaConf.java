@@ -9,13 +9,13 @@ import mx.com.ledi.config.ArchivoConfiguracion;
  */
 public class AgendaConf extends ArchivoConfiguracion {
 
-	public AgendaConf(String nombreArchivo) {
-		super(nombreArchivo);
-	}
+    public AgendaConf(String nombreArchivo) {
+        super(nombreArchivo);
+    }
 
-	@Override
-	public void initPorDefecto(Properties props) {
-		props.put("app.creador", "Hector & César");
-	}
+    @Override
+    public void initPorDefecto(Properties props) {
+        props.put("app.creador", "Hector & César");
+    }
 
 }

@@ -18,17 +18,20 @@ public class Agenda extends AplicacionFrame {
 
     private static final Logger log = LoggerFactory.getLogger(Agenda.class);
 
-    private SessionFactory factory;
+    private final AgendaConf configuracion;
+    private final SessionFactory factory;
+
     private MenuUtil menu;
-    private CardNavigator nav;
-    private AppMapCache cache;
+    private final CardNavigator nav;
+    private final AppMapCache cache;
     private AplicacionView vistaActual;
     //
     private Usuario usuario;
 
-    public Agenda(SessionFactory factory) {
+    public Agenda(AgendaConf configuracion, SessionFactory factory) {
         initComponents();
 
+        this.configuracion = configuracion;
         this.factory = factory;
         nav = new CardNavigator(jpContenido);
 
@@ -75,6 +78,7 @@ public class Agenda extends AplicacionFrame {
         menu.closeSub();
         menu.addItem("title.reportesemanal", AgendaClaves.REPORTE_SEMANAL);
         menu.addItem("title.configuracion", AgendaClaves.CONFIGURACION);
+        menu.addItem("title.preferencias", AgendaClaves.PREFERENCIAS);
         menu.addItem("title.salir", AgendaClaves.LOGIN);
         menu.menu("label.acercade");
         menu.closeSub();
@@ -126,7 +130,7 @@ public class Agenda extends AplicacionFrame {
                 nav.moveTo(tarea);
                 jlTitulo.setText(vista.getTitle());
                 jpContenido.validate(); /// Refrescar pantalla
-                
+
                 if (AgendaClaves.LOGIN.equals(tarea)) {
                     salir();
                 }
@@ -167,6 +171,10 @@ public class Agenda extends AplicacionFrame {
         return usuario;
     }
 
+    public AgendaConf getConfiguracion() {
+        return configuracion;
+    }
+
     public void ingresar(Usuario usuario) {
         this.usuario = usuario;
         jlUsuario.setText(String.format("<html><p>%s</p></html>", usuario));
@@ -176,11 +184,11 @@ public class Agenda extends AplicacionFrame {
         jlUsuario.setVisible(true);
         this.validate(); // Refrescar pantalla
     }
-    
+
     private void salir() {
         this.usuario = null;
         cache.clear(); // limpiar las ventanisimas!
-        
+
         tmMenu.setVisible(false);
         jpFooter.setVisible(false);
         jlUsuario.setVisible(false);
@@ -201,6 +209,7 @@ public class Agenda extends AplicacionFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Ingenio Centra Progreso");
+        setPreferredSize(new java.awt.Dimension(840, 620));
 
         tmMenu.setPreferredSize(new java.awt.Dimension(220, 563));
         getContentPane().add(tmMenu, java.awt.BorderLayout.LINE_START);
